@@ -1,6 +1,6 @@
 package dev.sergevas.iot.robotics.kipisopych.bot.adapter.out.web;
 
-import dev.sergevas.iot.robotics.kipisopych.bot.domain.Astronauts;
+import dev.sergevas.iot.robotics.kipisopych.bot.domain.astro.Astronauts;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Produces;
 import org.eclipse.microprofile.faulttolerance.Retry;

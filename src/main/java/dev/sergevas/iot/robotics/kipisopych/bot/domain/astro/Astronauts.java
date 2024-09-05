@@ -1,4 +1,4 @@
-package dev.sergevas.iot.robotics.kipisopych.bot.domain;
+package dev.sergevas.iot.robotics.kipisopych.bot.domain.astro;
 
 import java.util.List;
 
