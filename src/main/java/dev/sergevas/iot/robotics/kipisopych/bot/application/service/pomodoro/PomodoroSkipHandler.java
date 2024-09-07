@@ -13,6 +13,7 @@ public class PomodoroSkipHandler implements SkipPredicate {
 
     @Override
     public boolean test(ScheduledExecution execution) {
+        Log.debug("Test scheduled execution skip criteria");
         var pomodoroOpt = pomodoroReader.read();
         var shouldSkipExecution = pomodoroOpt.isEmpty() || pomodoroOpt.get().isPaused();
         Log.debugf("Should skip execution: %s", shouldSkipExecution);
