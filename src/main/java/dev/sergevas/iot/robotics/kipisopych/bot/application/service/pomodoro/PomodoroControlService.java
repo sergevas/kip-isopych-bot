@@ -28,13 +28,16 @@ public class PomodoroControlService implements PomodoroControlUseCase {
     public void setup(PomodoroConfig pomCfg) {
         try {
             Log.debugf("Setting up the Pomodoro Timer with initial config %s", pomCfg);
-            var pomodoro = new Pomodoro();
+            var pomodoroOpt = pomodoroReader.read();
+            var pomodoro = pomodoroOpt.orElse(new Pomodoro()).reset();
             pomodoro.setPomodoroDuration(pomCfg.pomodoroDuration());
             pomodoro.setShortBreakDuration(pomCfg.shortBreakDuration());
             pomodoro.setLongBreakDuration(pomCfg.longBreakDuration());
             pomodoro.setNumOfPomodoros(pomCfg.numOfPomodoros());
-            pomodoroWriter.write(pomodoro);
-            Log.debugf("Persisting a new Pomodoro setup %s", pomCfg);
+            if (pomodoroOpt.isEmpty()) {
+                pomodoroWriter.write(pomodoro);
+                Log.debugf("Persisting a new Pomodoro setup %s", pomCfg);
+            }
         } catch (Exception e) {
             Log.error(e);
         }

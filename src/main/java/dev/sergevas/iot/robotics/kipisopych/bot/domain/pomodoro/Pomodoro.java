@@ -30,33 +30,25 @@ public class Pomodoro {
     private PomodoroState state;
 
     public Pomodoro() {
-        currentNumber = 1;
-        elapsedTime = 0;
-        pomodoroDuration = 0;
-        shortBreakDuration = 0;
-        longBreakDuration = 0;
-        numOfPomodoros = 0;
-        type = POMODORO;
-        state = STARTED;
     }
 
-    public Pomodoro(Integer pomodoroDuration,
-                    Integer shortBreakDuration,
-                    Integer longBreakDuration,
-                    Integer numOfPomodoros,
-                    Integer currentNumber,
-                    Integer elapsedTime,
-                    PomodoroType type,
-                    PomodoroState state) {
-        this.pomodoroDuration = pomodoroDuration;
-        this.shortBreakDuration = shortBreakDuration;
-        this.longBreakDuration = longBreakDuration;
-        this.numOfPomodoros = numOfPomodoros;
-        this.currentNumber = currentNumber;
-        this.elapsedTime = elapsedTime;
-        this.type = type;
-        this.state = state;
-    }
+//    public Pomodoro(Integer pomodoroDuration,
+//                    Integer shortBreakDuration,
+//                    Integer longBreakDuration,
+//                    Integer numOfPomodoros,
+//                    Integer currentNumber,
+//                    Integer elapsedTime,
+//                    PomodoroType type,
+//                    PomodoroState state) {
+//        this.pomodoroDuration = pomodoroDuration;
+//        this.shortBreakDuration = shortBreakDuration;
+//        this.longBreakDuration = longBreakDuration;
+//        this.numOfPomodoros = numOfPomodoros;
+//        this.currentNumber = currentNumber;
+//        this.elapsedTime = elapsedTime;
+//        this.type = type;
+//        this.state = state;
+//    }
 
     public Long getId() {
         return id;
@@ -134,6 +126,22 @@ public class Pomodoro {
         return PAUSED.equals(state);
     }
 
+    public Pomodoro reset() {
+        currentNumber = 1;
+        elapsedTime = 0;
+        pomodoroDuration = 0;
+        shortBreakDuration = 0;
+        longBreakDuration = 0;
+        numOfPomodoros = 0;
+        type = POMODORO;
+        state = STARTED;
+        return this;
+    }
+
+    public void resetElapsedTime() {
+        this.elapsedTime = 0;
+    }
+
     public Integer incElapsedTime() {
         return ++elapsedTime;
     }
@@ -164,20 +172,17 @@ public class Pomodoro {
 
     public void toggleToLongBreak() {
         this.type = LONG_BREAK;
-        this.elapsedTime = 0;
-        this.currentNumber = 0;
+        resetElapsedTime();
     }
 
     public void toggleToShortBreak() {
         this.type = SHORT_BREAK;
-        this.elapsedTime = 0;
-        this.currentNumber = 0;
+        resetElapsedTime();
     }
 
     public void toggleToPomodoro() {
         this.type = POMODORO;
-        this.elapsedTime = 0;
-        this.currentNumber = 1;
+        resetElapsedTime();
     }
 
     public void toggle() {
@@ -187,6 +192,7 @@ public class Pomodoro {
             toggleToShortBreak();
         } else {
             toggleToPomodoro();
+            incCurrentNumber();
         }
     }
 

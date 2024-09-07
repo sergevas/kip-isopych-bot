@@ -11,7 +11,7 @@ class PomodoroTest {
 
     @Test
     void testNew() {
-        var pomodoro = new Pomodoro();
+        var pomodoro = new Pomodoro().reset();
         assertEquals(1, pomodoro.getCurrentNumber());
         assertEquals(0, pomodoro.getElapsedTime());
         assertEquals(POMODORO, pomodoro.getType());
@@ -20,7 +20,7 @@ class PomodoroTest {
 
     @Test
     void isPaused() {
-        var pomodoro = new Pomodoro();
+        var pomodoro = new Pomodoro().reset();
         assertFalse(pomodoro.isPaused());
         pomodoro.setState(PAUSED);
         assertTrue(pomodoro.isPaused());
@@ -28,7 +28,7 @@ class PomodoroTest {
 
     @Test
     void incElapsedTime() {
-        var pomodoro = new Pomodoro();
+        var pomodoro = new Pomodoro().reset();
         pomodoro.setElapsedTime(7);
         pomodoro.incElapsedTime();
         assertEquals(8, pomodoro.getElapsedTime());
@@ -36,7 +36,7 @@ class PomodoroTest {
 
     @Test
     void incCurrentNumber() {
-        var pomodoro = new Pomodoro();
+        var pomodoro = new Pomodoro().reset();
         pomodoro.setCurrentNumber(3);
         pomodoro.incCurrentNumber();
         assertEquals(4, pomodoro.getCurrentNumber());
@@ -44,7 +44,7 @@ class PomodoroTest {
 
     @Test
     void isPomodoroFinished() {
-        var pomodoro = new Pomodoro();
+        var pomodoro = new Pomodoro().reset();
         pomodoro.setPomodoroDuration(25);
         pomodoro.setShortBreakDuration(5);
         pomodoro.setLongBreakDuration(15);
@@ -60,7 +60,7 @@ class PomodoroTest {
 
     @Test
     void isShortBreakFinished() {
-        var pomodoro = new Pomodoro();
+        var pomodoro = new Pomodoro().reset();
         pomodoro.setType(SHORT_BREAK);
         pomodoro.setShortBreakDuration(5);
         pomodoro.setElapsedTime(4);
@@ -75,7 +75,7 @@ class PomodoroTest {
 
     @Test
     void isLongBreakFinished() {
-        var pomodoro = new Pomodoro();
+        var pomodoro = new Pomodoro().reset();
         pomodoro.setType(LONG_BREAK);
         pomodoro.setLongBreakDuration(15);
         pomodoro.setElapsedTime(14);
@@ -90,7 +90,7 @@ class PomodoroTest {
 
     @Test
     void isFinished() {
-        var pomodoro = new Pomodoro();
+        var pomodoro = new Pomodoro().reset();
         pomodoro.setPomodoroDuration(25);
         assertFalse(pomodoro.isFinished());
         pomodoro.setElapsedTime(25);
@@ -99,7 +99,7 @@ class PomodoroTest {
 
     @Test
     void isLastPomodoro() {
-        var pomodoro = new Pomodoro();
+        var pomodoro = new Pomodoro().reset();
         pomodoro.setNumOfPomodoros(4);
         assertFalse(pomodoro.isLastPomodoro());
         pomodoro.incCurrentNumber();
@@ -112,25 +112,25 @@ class PomodoroTest {
 
     @Test
     void toggleToLongBreak() {
-        var pomodoro = new Pomodoro();
+        var pomodoro = new Pomodoro().reset();
         pomodoro.toggleToLongBreak();
         assertEquals(LONG_BREAK, pomodoro.getType());
         assertEquals(0, pomodoro.getElapsedTime());
-        assertEquals(0, pomodoro.getCurrentNumber());
+        assertEquals(1, pomodoro.getCurrentNumber());
     }
 
     @Test
     void toggleToShortBreak() {
-        var pomodoro = new Pomodoro();
+        var pomodoro = new Pomodoro().reset();
         pomodoro.toggleToShortBreak();
         assertEquals(SHORT_BREAK, pomodoro.getType());
         assertEquals(0, pomodoro.getElapsedTime());
-        assertEquals(0, pomodoro.getCurrentNumber());
+        assertEquals(1, pomodoro.getCurrentNumber());
     }
 
     @Test
     void toggleToPomodoro() {
-        var pomodoro = new Pomodoro();
+        var pomodoro = new Pomodoro().reset();
         pomodoro.toggleToPomodoro();
         assertEquals(POMODORO, pomodoro.getType());
         assertEquals(0, pomodoro.getElapsedTime());
@@ -139,30 +139,30 @@ class PomodoroTest {
 
     @Test
     void should_toggle_toLongBreak() {
-        var pomodoro = new Pomodoro();
+        var pomodoro = new Pomodoro().reset();
         pomodoro.setNumOfPomodoros(4);
         pomodoro.setCurrentNumber(4); // The last Pomodoro
         pomodoro.toggle();
         assertEquals(LONG_BREAK, pomodoro.getType());
         assertEquals(0, pomodoro.getElapsedTime());
-        assertEquals(0, pomodoro.getCurrentNumber());
+        assertEquals(4, pomodoro.getCurrentNumber());
     }
 
     @Test
     void should_toggle_toShortBreak() {
-        var pomodoro = new Pomodoro();
+        var pomodoro = new Pomodoro().reset();
         pomodoro.setNumOfPomodoros(4);
         pomodoro.setCurrentNumber(3); // Not the last Pomodoro
         pomodoro.toggle();
         assertEquals(SHORT_BREAK, pomodoro.getType());
         assertEquals(0, pomodoro.getElapsedTime());
-        assertEquals(0, pomodoro.getCurrentNumber());
+        assertEquals(3, pomodoro.getCurrentNumber());
 
     }
 
     @Test
     void should_toggle_toPomodoro_fromShortBreak() {
-        var pomodoro = new Pomodoro();
+        var pomodoro = new Pomodoro().reset();
         pomodoro.setType(SHORT_BREAK);
         pomodoro.setNumOfPomodoros(0);
         pomodoro.setCurrentNumber(0);
@@ -174,7 +174,7 @@ class PomodoroTest {
 
     @Test
     void should_toggle_toPomodoro_fromLongBreak() {
-        var pomodoro = new Pomodoro();
+        var pomodoro = new Pomodoro().reset();
         pomodoro.setType(LONG_BREAK);
         pomodoro.setNumOfPomodoros(0);
         pomodoro.setCurrentNumber(0);

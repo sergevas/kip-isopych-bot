@@ -7,15 +7,12 @@ import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static dev.sergevas.iot.robotics.kipisopych.bot.application.port.out.pomodoro.PomodoroException.FETCH_ERROR_MSG;
 
 @ApplicationScoped
 public class PomodoroStateService implements PomodoroStateUseCase {
 
-    private static final Logger log = LoggerFactory.getLogger(PomodoroStateService.class);
     @Inject
     PomodoroReader pomodoroReader;
 
@@ -30,12 +27,9 @@ public class PomodoroStateService implements PomodoroStateUseCase {
         Log.debugf("Elapsed time: %s", elapsedTime);
         var isFinished = pomodoro.isFinished();
         Log.debugf("Is finished: %s", isFinished);
-        if (pomodoro.isFinished()) {
+        if (isFinished) {
             Log.debug("Toggle!");
             pomodoro.toggle();
-        } else {
-            Log.debug("Increment current number!");
-            pomodoro.incCurrentNumber();
         }
         Log.debug("---------- The Pomodoro new state ----------");
         Log.debug(pomodoro);

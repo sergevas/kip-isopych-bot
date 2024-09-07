@@ -4,8 +4,10 @@ import dev.sergevas.iot.robotics.kipisopych.bot.application.port.out.pomodoro.Po
 import io.quarkus.logging.Log;
 import io.quarkus.scheduler.Scheduled.SkipPredicate;
 import io.quarkus.scheduler.ScheduledExecution;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+@ApplicationScoped
 public class PomodoroSkipHandler implements SkipPredicate {
 
     @Inject
