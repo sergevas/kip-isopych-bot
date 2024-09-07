@@ -1,6 +1,7 @@
 package dev.sergevas.iot.robotics.kipisopych.bot.application.service.pomodoro;
 
 import dev.sergevas.iot.robotics.kipisopych.bot.application.port.in.pomodoro.PomodoroControlUseCase;
+import dev.sergevas.iot.robotics.kipisopych.bot.application.port.out.pomodoro.PomodoroException;
 import dev.sergevas.iot.robotics.kipisopych.bot.application.port.out.pomodoro.PomodoroReader;
 import dev.sergevas.iot.robotics.kipisopych.bot.application.port.out.pomodoro.PomodoroWriter;
 import dev.sergevas.iot.robotics.kipisopych.bot.domain.pomodoro.Pomodoro;
@@ -10,6 +11,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
+import static dev.sergevas.iot.robotics.kipisopych.bot.application.port.out.pomodoro.PomodoroException.FETCH_ERROR_MSG;
 import static dev.sergevas.iot.robotics.kipisopych.bot.domain.pomodoro.PomodoroState.PAUSED;
 import static dev.sergevas.iot.robotics.kipisopych.bot.domain.pomodoro.PomodoroState.STARTED;
 
@@ -43,7 +45,7 @@ public class PomodoroControlService implements PomodoroControlUseCase {
     public void resume() {
         try {
             Log.debug("Resume Pomodoro Timer");
-            pomodoroReader.read().setState(STARTED);
+            pomodoroReader.read().orElseThrow(() -> new PomodoroException(FETCH_ERROR_MSG)).setState(STARTED);
         } catch (Exception e) {
             Log.error(e);
         }
@@ -54,7 +56,7 @@ public class PomodoroControlService implements PomodoroControlUseCase {
     public void pause() {
         try {
             Log.info("Pause Pomodoro Timer");
-            pomodoroReader.read().setState(PAUSED);
+            pomodoroReader.read().orElseThrow(() -> new PomodoroException(FETCH_ERROR_MSG)).setState(PAUSED);
         } catch (Exception e) {
             Log.error(e);
         }

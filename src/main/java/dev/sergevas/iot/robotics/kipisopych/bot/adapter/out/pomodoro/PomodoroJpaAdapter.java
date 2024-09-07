@@ -8,6 +8,8 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 
+import java.util.Optional;
+
 @ApplicationScoped
 public class PomodoroJpaAdapter implements PomodoroReader, PomodoroWriter {
 
@@ -16,8 +18,9 @@ public class PomodoroJpaAdapter implements PomodoroReader, PomodoroWriter {
 
     @Override
     @Transactional
-    public Pomodoro read() {
-        return em.createNamedQuery("Pomodoro.findAll", Pomodoro.class).getSingleResult();
+    public Optional<Pomodoro> read() {
+        var pomodoros = em.createNamedQuery("Pomodoro.findAll", Pomodoro.class).getResultList();
+        return pomodoros.isEmpty() ? Optional.empty() : Optional.of(pomodoros.getFirst());
     }
 
     @Override

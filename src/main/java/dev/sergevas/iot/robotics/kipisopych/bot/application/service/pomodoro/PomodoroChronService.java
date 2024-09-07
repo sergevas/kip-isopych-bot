@@ -14,7 +14,7 @@ public class PomodoroChronService {
 
     @Scheduled(every = "60s", skipExecutionIf = PomodoroSkipHandler.class)
     void countdownPomodoro() {
-        Log.info("Fire Pomodoro Timer countdown...");
+        Log.debug("Fire Pomodoro Timer countdown...");
         pomodoroStateUseCase.updateCurrentState();
     }
 }
