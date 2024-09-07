@@ -32,6 +32,10 @@ public class Pomodoro {
     public Pomodoro() {
         currentNumber = 1;
         elapsedTime = 0;
+        pomodoroDuration = 0;
+        shortBreakDuration = 0;
+        longBreakDuration = 0;
+        numOfPomodoros = 0;
         type = POMODORO;
         state = STARTED;
     }
@@ -174,7 +178,6 @@ public class Pomodoro {
         this.type = POMODORO;
         this.elapsedTime = 0;
         this.currentNumber = 1;
-
     }
 
     public void toggle() {
@@ -185,9 +188,7 @@ public class Pomodoro {
         } else {
             toggleToPomodoro();
         }
-
     }
-
 
     @Override
     public boolean equals(Object o) {
