@@ -1,0 +1,17 @@
+[Unit]
+Description=Kip Isopych application service
+After=syslog.target network.target
+
+[Service]
+TimeoutStartSec=180
+SuccessExitStatus=143
+User=kipisopych
+Type=simple
+RemainAfterExit = no
+RestartSec=5
+Restart = always
+ExecStart=/usr/lib/jvm/zulu17.52.17-ca-jdk17.0.12-c2-linux_aarch32hf/bin/java -Xms32m -Xmx256m -server -jar /opt/kip-isopych/kip-isopych-bot-1.0.0.jar
+ExecStop=/bin/kill -15 $MAINPID
+
+[Install]
+WantedBy=multi-user.target

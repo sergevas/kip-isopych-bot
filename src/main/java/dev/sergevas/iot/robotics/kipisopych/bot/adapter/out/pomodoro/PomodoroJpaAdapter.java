@@ -20,7 +20,7 @@ public class PomodoroJpaAdapter implements PomodoroReader, PomodoroWriter {
     @Transactional
     public Optional<Pomodoro> read() {
         var pomodoros = em.createNamedQuery("Pomodoro.findAll", Pomodoro.class).getResultList();
-        return pomodoros.isEmpty() ? Optional.empty() : Optional.of(pomodoros.getFirst());
+        return pomodoros.isEmpty() ? Optional.empty() : Optional.of(pomodoros.get(0));
     }
 
     @Override
