@@ -24,11 +24,13 @@ public class RpiVoiceAdapter implements VoiceSynthesizer {
 
     @Override
     public void speak(String fileName) {
-        var absPath = voiceBasePath + "/" + fileName;
+        Log.debug("Enter speak method...");
+        var absPath = voiceBasePath + "/" + fileName + ".mp3";
         playMp3(absPath).subscribe().with(
                 unused -> Log.debugf("MP3 file %s playback completed", absPath),
                 failure -> Log.errorf(failure, "Failed to play MP3 file %s", absPath)
         );
+        Log.debug("Exit speak method...");
     }
 
     public Uni<Void> playMp3(String filePath) {
