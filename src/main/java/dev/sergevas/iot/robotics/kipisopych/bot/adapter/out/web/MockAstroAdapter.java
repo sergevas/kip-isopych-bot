@@ -12,6 +12,6 @@ import java.util.List;
 public class MockAstroAdapter implements AstroFetcher {
     @Override
     public Astronauts fetch() {
-        return new Astronauts(List.of(), 14, "success");
+        return new Astronauts(List.of(), 14);
     }
 }
