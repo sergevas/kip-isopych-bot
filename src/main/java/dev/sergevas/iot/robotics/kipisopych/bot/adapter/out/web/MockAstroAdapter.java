@@ -2,19 +2,16 @@ package dev.sergevas.iot.robotics.kipisopych.bot.adapter.out.web;
 
 import dev.sergevas.iot.robotics.kipisopych.bot.application.port.out.astro.AstroFetcher;
 import dev.sergevas.iot.robotics.kipisopych.bot.domain.astro.Astronauts;
-import io.quarkus.arc.profile.UnlessBuildProfile;
+import io.quarkus.arc.DefaultBean;
 import jakarta.enterprise.context.ApplicationScoped;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
+
+import java.util.List;
 
 @ApplicationScoped
-@UnlessBuildProfile("test")
-public class AstroHttpAdapter implements AstroFetcher {
-
-    @RestClient
-    AstroRestClient astroRestClient;
-
+@DefaultBean
+public class MockAstroAdapter implements AstroFetcher {
     @Override
     public Astronauts fetch() {
-        return astroRestClient.getAstronauts();
+        return new Astronauts(List.of(), 14, "success");
     }
 }
