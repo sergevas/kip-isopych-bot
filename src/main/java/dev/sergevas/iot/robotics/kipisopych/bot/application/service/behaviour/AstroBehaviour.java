@@ -10,12 +10,14 @@ public class AstroBehaviour {
 
     @Inject
     VoiceSynthesizer voiceSynthesizer;
+    @Inject
+    AstroArmsBehaviour astroArmsBehaviour;
 
     public void success(Integer number) {
         Log.debugf("Success behaviour, number of astros: %d", number);
         var voiceFileName = "astro" + number;
         voiceSynthesizer.speak(voiceFileName);
-
+        astroArmsBehaviour.success();
     }
 
     public void failedToCheck() {

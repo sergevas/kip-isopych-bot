@@ -2,9 +2,9 @@ package dev.sergevas.iot.robotics.kipisopych.bot.application.port.out.arms;
 
 public interface ArmMoveInitiator {
 
-    void moveLeft();
+    void moveLeft(int steps);
 
-    void moveRight();
+    void moveRight(int steps);
 
-    void moveBoth();
+    void moveBoth(int lSteps, int rSteps);
 }

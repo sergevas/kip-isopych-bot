@@ -10,17 +10,17 @@ import jakarta.enterprise.context.ApplicationScoped;
 public class MockArmAdapter implements ArmMoveInitiator {
 
     @Override
-    public void moveLeft() {
-        Log.info("Kip Isopych is moving the left arm");
+    public void moveLeft(int steps) {
+        Log.infof("Kip Isopych is moving the left arm for %d steps", steps);
     }
 
     @Override
-    public void moveRight() {
-        Log.info("Kip Isopych is moving the right arm");
+    public void moveRight(int steps) {
+        Log.infof("Kip Isopych is moving the right arm for %d steps", steps);
     }
 
     @Override
-    public void moveBoth() {
-        Log.info("Kip Isopych is moving the both arms");
+    public void moveBoth(int lSteps, int rSteps) {
+        Log.infof("Kip Isopych is moving the both arms for %d lSteps and %d for rSteps", lSteps, rSteps);
     }
 }
