@@ -23,22 +23,14 @@ public class RpiVoiceAdapter implements VoiceSynthesizer {
     String voiceBasePath;
 
     @Override
-    public void speak(String fileName) {
+    public Uni<Void> speak(String fileName) {
         Log.debug("Enter speak method...");
         var absPath = voiceBasePath + "/" + fileName + ".mp3";
-        playMp3(absPath).subscribe().with(
-                unused -> Log.debugf("MP3 file %s playback completed", absPath),
-                failure -> Log.errorf(failure, "Failed to play MP3 file %s", absPath)
-        );
-        Log.debug("Exit speak method...");
-    }
-
-    public Uni<Void> playMp3(String filePath) {
-        Log.debugf("filepath: %s", filePath);
+        Log.debugf("absPath: %s", absPath);
         return Uni.createFrom().item(Unchecked.supplier(() -> {
             try {
-                InputStream fileInputStream = new FileInputStream(filePath);
-                Log.debugf("Play MP3 file: %s", filePath);
+                InputStream fileInputStream = new FileInputStream(absPath);
+                Log.debugf("Play MP3 file: %s", absPath);
                 AdvancedPlayer player = new AdvancedPlayer(fileInputStream, FactoryRegistry.systemRegistry().createAudioDevice());
                 player.play();
             } catch (Exception e) {
@@ -49,3 +41,19 @@ public class RpiVoiceAdapter implements VoiceSynthesizer {
         })).runSubscriptionOn(Infrastructure.getDefaultExecutor()).replaceWithVoid();
     }
 }
+
+
+/*
+*
+* @Override
+    public void speak(String fileName) {
+        Log.debug("Enter speak method...");
+        var absPath = voiceBasePath + "/" + fileName + ".mp3";
+        Log.debugf("absPath: %s", absPath);
+        playMp3(absPath).subscribe().with(
+                unused -> Log.debugf("MP3 file %s playback completed", absPath),
+                failure -> Log.errorf(failure, "Failed to play MP3 file %s", absPath)
+        );
+        Log.debug("Exit speak method...");
+    }
+* */

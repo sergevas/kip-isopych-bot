@@ -1,10 +1,12 @@
 package dev.sergevas.iot.robotics.kipisopych.bot.application.port.out.arms;
 
+import io.smallrye.mutiny.Uni;
+
 public interface ArmMoveInitiator {
 
-    void moveLeft(int steps);
+    Uni<Void> moveLeft(int steps);
 
-    void moveRight(int steps);
+    Uni<Void> moveRight(int steps);
 
-    void moveBoth(int lSteps, int rSteps);
+    Uni<Void> moveBoth(int lSteps, int rSteps);
 }
