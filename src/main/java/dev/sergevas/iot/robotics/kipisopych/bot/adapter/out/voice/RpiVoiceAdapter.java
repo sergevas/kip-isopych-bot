@@ -37,23 +37,8 @@ public class RpiVoiceAdapter implements VoiceSynthesizer {
                 Log.error(e);
                 throw new VoiceSynthesizerException(e);
             }
+            Log.debug("Exit speak method...");
             return null;
         })).runSubscriptionOn(Infrastructure.getDefaultExecutor()).replaceWithVoid();
     }
 }
-
-
-/*
-*
-* @Override
-    public void speak(String fileName) {
-        Log.debug("Enter speak method...");
-        var absPath = voiceBasePath + "/" + fileName + ".mp3";
-        Log.debugf("absPath: %s", absPath);
-        playMp3(absPath).subscribe().with(
-                unused -> Log.debugf("MP3 file %s playback completed", absPath),
-                failure -> Log.errorf(failure, "Failed to play MP3 file %s", absPath)
-        );
-        Log.debug("Exit speak method...");
-    }
-* */

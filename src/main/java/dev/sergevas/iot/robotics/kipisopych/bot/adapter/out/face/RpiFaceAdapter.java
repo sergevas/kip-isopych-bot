@@ -4,8 +4,12 @@ import com.github.mbelling.ws281x.Color;
 import com.github.mbelling.ws281x.LedStripType;
 import com.github.mbelling.ws281x.Ws281xLedStrip;
 import dev.sergevas.iot.robotics.kipisopych.bot.application.port.out.face.FacialController;
+import dev.sergevas.iot.robotics.kipisopych.bot.application.port.out.face.FacialControllerException;
 import io.quarkus.arc.profile.IfBuildProfile;
 import io.quarkus.logging.Log;
+import io.smallrye.mutiny.Uni;
+import io.smallrye.mutiny.infrastructure.Infrastructure;
+import io.smallrye.mutiny.unchecked.Unchecked;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -58,30 +62,37 @@ public class RpiFaceAdapter implements FacialController {
     }
 
     @Override
-    public void simulateTalkingFace(int sleep, int time) {
-        try {
-            var strip = new Ws281xLedStrip(ledsCount, gpioPin, frequencyHz, dma, 16, pwmChannel, invert, stripType, true);
-            strip.setStrip(Color.BLACK);
-            int numOfCircles = 20;
-            int pixelNum = 4;
-            for (int circle = 1; circle <= numOfCircles; circle++) {
-                for (int pixel = 0; pixel < pixelNum; pixel++) {
-//                    drawAllColors(strip, pixel);
-                    strip.setPixel(pixel, colors[pixel % colors.length]);
-                    strip.setPixel(pixel + 4, colors[pixel % colors.length]);
-                    strip.setPixel(11 - pixel, mouthColor);
-                    strip.setPixel(pixel + 12, mouthColor);
-                    strip.render();
-                    Thread.sleep(50);
-                    strip.setPixel(pixel, BLACK);
-                    strip.setPixel(pixel + 4, BLACK);
-                }
+    public Uni<Void> simulateTalkingFace(long sleep, int time) {
+        Log.debugf("Enter simulate talking face: sleep %d time %d", sleep, time);
+        return Uni.createFrom().item(Unchecked.supplier(() -> {
+            try {
+                var strip = new Ws281xLedStrip(ledsCount, gpioPin, frequencyHz, dma, 16, pwmChannel, invert, stripType, true);
                 strip.setStrip(Color.BLACK);
-                strip.render();
+//                int numOfCycles = 20;
+                int pixelNum = 4;
+                for (int circle = 1; circle <= time; circle++) {
+                    for (int pixel = 0; pixel < pixelNum; pixel++) {
+//                    drawAllColors(strip, pixel);
+                        strip.setPixel(pixel, colors[pixel % colors.length]);
+                        strip.setPixel(pixel + 4, colors[pixel % colors.length]);
+                        strip.setPixel(11 - pixel, mouthColor);
+                        strip.setPixel(pixel + 12, mouthColor);
+                        strip.render();
+//                        Thread.sleep(50);
+                        Thread.sleep(sleep);
+                        strip.setPixel(pixel, BLACK);
+                        strip.setPixel(pixel + 4, BLACK);
+                    }
+                    strip.setStrip(Color.BLACK);
+                    strip.render();
+                }
+            } catch (Exception e) {
+                Log.error(e);
+                throw new FacialControllerException(e);
             }
-        } catch (Exception e) {
-            Log.error(e);
-        }
+            Log.debug("Exit simulate talking face");
+            return null;
+        })).runSubscriptionOn(Infrastructure.getDefaultExecutor()).replaceWithVoid();
     }
 
     @Override

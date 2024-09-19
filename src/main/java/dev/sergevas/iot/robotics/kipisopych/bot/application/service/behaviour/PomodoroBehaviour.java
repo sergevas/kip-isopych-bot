@@ -10,8 +10,12 @@ import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 @ApplicationScoped
-public class AstroBehaviour {
+public class PomodoroBehaviour {
 
+    @ConfigProperty(name = "arms.left.up.steps")
+    int leftUpSteps;
+    @ConfigProperty(name = "arms.left.down.steps")
+    int leftDownSteps;
     @ConfigProperty(name = "arms.right.up.steps")
     int rightUpSteps;
     @ConfigProperty(name = "arms.right.down.steps")
@@ -23,20 +27,16 @@ public class AstroBehaviour {
     @Inject
     FacialController facialController;
 
-    public void success(Integer number) {
-        Log.infof("Success behaviour, number of astros: %d started", number);
-        var voiceFileName = "astro" + number;
-        armMoveInitiator.moveRight(rightUpSteps)
-                .chain(() -> Uni.combine().all().unis(voiceSynthesizer.speak(voiceFileName),
+    public void afterSetup() {
+        Log.debug("Enter afterSetup behaviour");
+        armMoveInitiator.moveBoth(leftUpSteps, rightUpSteps)
+                .chain(() -> Uni.combine().all().unis(voiceSynthesizer.speak(VOICE_FILE_NAME),
                                 facialController.simulateTalkingFace(50, 10))
                         .asTuple())
-                .chain(() -> armMoveInitiator.moveRight(rightDownSteps))
+                .chain(() -> armMoveInitiator.moveBoth(leftDownSteps, rightDownSteps))
                 .subscribe().with(
-                        unused -> Log.infof("Success Astro behaviour, number of astros: %d ended", number),
-                        failure -> Log.error("Failed to fire success Astro behaviour", failure));
-    }
-
-    public void failedToCheck() {
-        Log.debug("Unable to check astros");
+                        unused -> Log.info("Success exit afterSetup behaviour"),
+                        failure -> Log.error("Failed to fire afterSetup behaviour", failure));
+        Log.debug("Enter afterSetup behaviour");
     }
 }

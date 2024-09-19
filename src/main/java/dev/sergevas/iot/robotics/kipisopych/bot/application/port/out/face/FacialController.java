@@ -1,8 +1,10 @@
 package dev.sergevas.iot.robotics.kipisopych.bot.application.port.out.face;
 
+import io.smallrye.mutiny.Uni;
+
 public interface FacialController {
 
-    void simulateTalkingFace(int sleep, int time);
+    Uni<Void> simulateTalkingFace(long sleep, int time);
 
     void blinkRightEye(double speed);
 
