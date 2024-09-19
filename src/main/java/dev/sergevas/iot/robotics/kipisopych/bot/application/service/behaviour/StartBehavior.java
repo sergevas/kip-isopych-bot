@@ -36,7 +36,7 @@ public class StartBehavior {
                 .chain(() -> voiceSynthesizer.speak(VOICE_FILE_NAME))
                 .chain(() -> armMoveInitiator.moveBoth(leftDownSteps, rightDownSteps))
                 .subscribe().with(
-                        unused -> Log.info("Success Start behaviour, number of astros: %d ended"),
+                        unused -> Log.info("Success Start behaviour ended"),
                         failure -> Log.error("Failed to fire Start behaviour", failure));
     }
 

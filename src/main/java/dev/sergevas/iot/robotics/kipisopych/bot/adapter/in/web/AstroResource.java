@@ -15,6 +15,6 @@ public class AstroResource {
     @GET
     public Response getAstronauts() {
         astroUseCase.checkAstronautsOnOrbitAndShoutAboutIt();
-        return Response.noContent().build();
+        return Response.ok().build();
     }
 }

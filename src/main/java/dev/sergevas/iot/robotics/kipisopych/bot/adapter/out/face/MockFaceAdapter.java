@@ -10,8 +10,8 @@ import jakarta.enterprise.context.ApplicationScoped;
 public class MockFaceAdapter implements FacialController {
 
     @Override
-    public void blinkLeftEye(double speed) {
-        Log.infof("Kip Isopych is blinking with the left eye with speed %f", speed);
+    public void simulateTalkingFace(int sleep, int time) {
+        Log.infof("Kip Isopych is simulating talking face sleep %d time %d", sleep, time);
     }
 
     @Override

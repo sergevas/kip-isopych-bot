@@ -2,7 +2,7 @@ package dev.sergevas.iot.robotics.kipisopych.bot.application.port.out.face;
 
 public interface FacialController {
 
-    void blinkLeftEye(double speed);
+    void simulateTalkingFace(int sleep, int time);
 
     void blinkRightEye(double speed);
 
