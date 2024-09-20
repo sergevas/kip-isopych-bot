@@ -23,6 +23,16 @@ public class MockFaceAdapter implements FacialController {
     }
 
     @Override
+    public Uni<Void> displayBCD(int valueToDisplay) {
+        return Uni.createFrom().item(Unchecked.supplier(() -> {
+            Log.debugf("Enter simulate displayBCD valueToDisplay=%d", valueToDisplay);
+            Thread.sleep(10000);
+            Log.debug("Exit simulate displayBCD");
+            return null;
+        })).runSubscriptionOn(Infrastructure.getDefaultExecutor()).replaceWithVoid();
+    }
+
+    @Override
     public void blinkRightEye(double speed) {
         Log.infof("Kip Isopych is blinking with the right eye with speed %f", speed);
     }

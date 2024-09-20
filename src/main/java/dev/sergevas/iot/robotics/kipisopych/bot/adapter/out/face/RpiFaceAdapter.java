@@ -68,17 +68,14 @@ public class RpiFaceAdapter implements FacialController {
             try {
                 var strip = new Ws281xLedStrip(ledsCount, gpioPin, frequencyHz, dma, 16, pwmChannel, invert, stripType, true);
                 strip.setStrip(Color.BLACK);
-//                int numOfCycles = 20;
                 int pixelNum = 4;
                 for (int circle = 1; circle <= time; circle++) {
                     for (int pixel = 0; pixel < pixelNum; pixel++) {
-//                    drawAllColors(strip, pixel);
                         strip.setPixel(pixel, colors[pixel % colors.length]);
                         strip.setPixel(pixel + 4, colors[pixel % colors.length]);
                         strip.setPixel(11 - pixel, mouthColor);
                         strip.setPixel(pixel + 12, mouthColor);
                         strip.render();
-//                        Thread.sleep(50);
                         Thread.sleep(sleep);
                         strip.setPixel(pixel, BLACK);
                         strip.setPixel(pixel + 4, BLACK);
@@ -91,6 +88,38 @@ public class RpiFaceAdapter implements FacialController {
                 throw new FacialControllerException(e);
             }
             Log.debug("Exit simulate talking face");
+            return null;
+        })).runSubscriptionOn(Infrastructure.getDefaultExecutor()).replaceWithVoid();
+    }
+
+    @Override
+    public Uni<Void> displayBCD(int valueToDisplay) {
+        Log.debugf("Enter displayBCD: valueToDisplay=%d", valueToDisplay);
+        return Uni.createFrom().item(Unchecked.supplier(() -> {
+//            TODO: implement
+//            try {
+//                var strip = new Ws281xLedStrip(ledsCount, gpioPin, frequencyHz, dma, 8, pwmChannel, invert, stripType, true);
+//                strip.setStrip(Color.BLACK);
+//                int pixelNum = 4;
+//                for (int circle = 1; circle <= time; circle++) {
+//                    for (int pixel = 0; pixel < pixelNum; pixel++) {
+//                        strip.setPixel(pixel, colors[pixel % colors.length]);
+//                        strip.setPixel(pixel + 4, colors[pixel % colors.length]);
+//                        strip.setPixel(11 - pixel, mouthColor);
+//                        strip.setPixel(pixel + 12, mouthColor);
+//                        strip.render();
+//                        Thread.sleep(sleep);
+//                        strip.setPixel(pixel, BLACK);
+//                        strip.setPixel(pixel + 4, BLACK);
+//                    }
+//                    strip.setStrip(Color.BLACK);
+//                    strip.render();
+//                }
+//            } catch (Exception e) {
+//                Log.error(e);
+//                throw new FacialControllerException(e);
+//            }
+            Log.debug("Exit displayBCD");
             return null;
         })).runSubscriptionOn(Infrastructure.getDefaultExecutor()).replaceWithVoid();
     }
