@@ -9,6 +9,8 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
+import static dev.sergevas.iot.robotics.kipisopych.bot.application.service.behaviour.Delay.delay;
+
 @ApplicationScoped
 public class PomodoroBehaviour {
 
@@ -29,10 +31,12 @@ public class PomodoroBehaviour {
 
     public void afterSetup() {
         Log.debug("Enter afterSetup behaviour");
-        armMoveInitiator.moveBoth(leftUpSteps, rightUpSteps)
-                .chain(() -> Uni.combine().all().unis(voiceSynthesizer.speak(VOICE_FILE_NAME),
-                                facialController.simulateTalkingFace(50, 10))
+        armMoveInitiator.moveBoth(leftUpSteps / 2, rightUpSteps / 2)
+                .chain(() -> Uni.combine().all().unis(voiceSynthesizer.speak("pomodoroNew"),
+                                facialController.simulateTalkingFace(100, 20))
                         .asTuple())
+                .chain(() -> armMoveInitiator.moveBoth(leftUpSteps, rightUpSteps))
+                .chain(() -> delay(500))
                 .chain(() -> armMoveInitiator.moveBoth(leftDownSteps, rightDownSteps))
                 .subscribe().with(
                         unused -> Log.info("Success exit afterSetup behaviour"),

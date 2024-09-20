@@ -9,8 +9,6 @@ import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @ApplicationScoped
 public class StartBehavior {
@@ -30,14 +28,13 @@ public class StartBehavior {
     @Inject
     FacialController facialController;
 
-    private static final String VOICE_FILE_NAME = "start";
-
     @PostConstruct
     public void start() {
         Log.debug("Start behaviour started");
-        armMoveInitiator.moveBoth(leftUpSteps, rightUpSteps)
-                .chain(() -> Uni.combine().all().unis(voiceSynthesizer.speak(VOICE_FILE_NAME),
-                                facialController.simulateTalkingFace(50, 10))
+        voiceSynthesizer.speak("silence")
+                .chain(() -> armMoveInitiator.moveBoth(leftUpSteps, rightUpSteps))
+                .chain(() -> Uni.combine().all().unis(voiceSynthesizer.speak("start"),
+                                facialController.simulateTalkingFace(75, 12))
                         .asTuple())
                 .chain(() -> armMoveInitiator.moveBoth(leftDownSteps, rightDownSteps))
                 .subscribe().with(

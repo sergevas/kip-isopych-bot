@@ -28,7 +28,7 @@ public class AstroBehaviour {
         var voiceFileName = "astro" + number;
         armMoveInitiator.moveRight(rightUpSteps)
                 .chain(() -> Uni.combine().all().unis(voiceSynthesizer.speak(voiceFileName),
-                                facialController.simulateTalkingFace(50, 10))
+                                facialController.simulateTalkingFace(50, 20))
                         .asTuple())
                 .chain(() -> armMoveInitiator.moveRight(rightDownSteps))
                 .subscribe().with(
