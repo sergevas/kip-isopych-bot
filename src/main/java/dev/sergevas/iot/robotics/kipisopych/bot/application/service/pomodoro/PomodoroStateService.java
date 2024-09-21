@@ -1,8 +1,10 @@
 package dev.sergevas.iot.robotics.kipisopych.bot.application.service.pomodoro;
 
 import dev.sergevas.iot.robotics.kipisopych.bot.application.port.in.pomodoro.PomodoroStateUseCase;
+import dev.sergevas.iot.robotics.kipisopych.bot.application.port.out.event.EventSender;
 import dev.sergevas.iot.robotics.kipisopych.bot.application.port.out.pomodoro.PomodoroException;
 import dev.sergevas.iot.robotics.kipisopych.bot.application.port.out.pomodoro.PomodoroReader;
+import dev.sergevas.iot.robotics.kipisopych.bot.domain.pomodoro.Pomodoro;
 import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -15,6 +17,8 @@ public class PomodoroStateService implements PomodoroStateUseCase {
 
     @Inject
     PomodoroReader pomodoroReader;
+    @Inject
+    EventSender<Pomodoro> eventSender;
 
     @Override
     @Transactional
@@ -30,6 +34,7 @@ public class PomodoroStateService implements PomodoroStateUseCase {
         if (isFinished) {
             Log.debug("Toggle!");
             pomodoro.toggle();
+            eventSender.send(pomodoro);
         }
         Log.debug("---------- The Pomodoro new state ----------");
         Log.debug(pomodoro);
