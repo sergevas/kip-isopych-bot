@@ -10,17 +10,11 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
+import static dev.sergevas.iot.robotics.kipisopych.bot.domain.arm.ArmPosition.*;
+
 @ApplicationScoped
 public class StartBehavior {
 
-    @ConfigProperty(name = "arms.left.up.steps")
-    int leftUpSteps;
-    @ConfigProperty(name = "arms.left.down.steps")
-    int leftDownSteps;
-    @ConfigProperty(name = "arms.right.up.steps")
-    int rightUpSteps;
-    @ConfigProperty(name = "arms.right.down.steps")
-    int rightDownSteps;
     @Inject
     ArmMoveInitiator armMoveInitiator;
     @Inject
@@ -32,17 +26,17 @@ public class StartBehavior {
     public void start() {
         Log.debug("Start behaviour started");
         voiceSynthesizer.speak("silence")
-                .chain(() -> armMoveInitiator.moveBoth(leftUpSteps, rightUpSteps))
+                .chain(() -> armMoveInitiator.moveBoth(LEFT_UP.steps(), RIGHT_UP.steps()))
                 .chain(() -> Uni.combine().all().unis(voiceSynthesizer.speak("start"),
                                 facialController.simulateTalkingFace(75, 12))
                         .asTuple())
-                .chain(() -> armMoveInitiator.moveBoth(leftDownSteps, rightDownSteps))
+                .chain(() -> armMoveInitiator.moveBoth(LEFT_DOWN.steps(), RIGHT_DOWN.steps()))
                 .subscribe().with(
                         unused -> Log.info("Success Start behaviour ended"),
                         failure -> Log.error("Failed to fire Start behaviour", failure));
     }
 
     public void ping() {
-//        Do nothing
+//    A workaround to instantiate CDI instance
     }
 }

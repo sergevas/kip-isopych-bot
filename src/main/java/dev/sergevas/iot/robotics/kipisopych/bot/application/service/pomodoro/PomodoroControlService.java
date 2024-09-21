@@ -32,7 +32,29 @@ public class PomodoroControlService implements PomodoroControlUseCase {
         try {
             Log.debugf("Setting up the Pomodoro Timer with initial config %s", pomCfg);
             createOrUpdatePomodoro(pomCfg);
-            pomodoroBehaviour.afterSetup();
+            pomodoroBehaviour.setup();
+        } catch (Exception e) {
+            Log.error(e);
+        }
+    }
+
+    @Override
+    public void pause() {
+        try {
+            Log.info("Pause Pomodoro Timer");
+            updatePomodoroState(PAUSED);
+            pomodoroBehaviour.pause();
+        } catch (Exception e) {
+            Log.error(e);
+        }
+    }
+
+    @Override
+    public void resume() {
+        try {
+            Log.debug("Resume Pomodoro Timer");
+            updatePomodoroState(STARTED);
+            pomodoroBehaviour.resume();
         } catch (Exception e) {
             Log.error(e);
         }
@@ -52,27 +74,6 @@ public class PomodoroControlService implements PomodoroControlUseCase {
             Log.debugf("Persisting a new Pomodoro setup %s", pomCfg);
         }
         Log.debug("Exit create or update Pomodoro");
-    }
-
-
-    @Override
-    public void resume() {
-        try {
-            Log.debug("Resume Pomodoro Timer");
-            updatePomodoroState(STARTED);
-        } catch (Exception e) {
-            Log.error(e);
-        }
-    }
-
-    @Override
-    public void pause() {
-        try {
-            Log.info("Pause Pomodoro Timer");
-            updatePomodoroState(PAUSED);
-        } catch (Exception e) {
-            Log.error(e);
-        }
     }
 
     @Transactional
