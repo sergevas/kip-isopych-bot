@@ -1,7 +1,7 @@
 package dev.sergevas.iot.robotics.kipisopych.bot.application.service.event;
 
 import dev.sergevas.iot.robotics.kipisopych.bot.application.port.in.event.StartupHandler;
-import dev.sergevas.iot.robotics.kipisopych.bot.application.service.behaviour.StartBehavior;
+import dev.sergevas.iot.robotics.kipisopych.bot.application.service.behaviour.StartUpBehavior;
 import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -11,12 +11,12 @@ import jakarta.inject.Inject;
 public class StartupEventService implements StartupHandler {
 
     @Inject
-    StartBehavior startBehavior;
+    StartUpBehavior startBehavior;
 
     @Override
     public void handleStartup() {
         Log.debug("Enter handleStartup()");
-        startBehavior.start();
+        startBehavior.startUp();
         Log.debug("Exit handleStartup()");
     }
 }

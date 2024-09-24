@@ -1,5 +1,6 @@
 package dev.sergevas.iot.robotics.kipisopych.bot.application.service.behaviour;
 
+import dev.sergevas.iot.robotics.kipisopych.bot.application.port.in.behaviour.BehaviourUseCase;
 import dev.sergevas.iot.robotics.kipisopych.bot.application.port.out.arms.ArmMoveInitiator;
 import dev.sergevas.iot.robotics.kipisopych.bot.application.port.out.face.FacialController;
 import dev.sergevas.iot.robotics.kipisopych.bot.application.port.out.voice.VoiceSynthesizer;
@@ -11,7 +12,7 @@ import jakarta.inject.Inject;
 import static dev.sergevas.iot.robotics.kipisopych.bot.domain.arm.ArmPosition.*;
 
 @ApplicationScoped
-public class StartBehavior {
+public class StartUpBehavior implements BehaviourUseCase {
 
     @Inject
     ArmMoveInitiator armMoveInitiator;
@@ -20,8 +21,8 @@ public class StartBehavior {
     @Inject
     FacialController facialController;
 
-    public void start() {
-        Log.debug("Start behaviour started");
+    public void startUp() {
+        Log.debug("Enter StartUp behaviour");
         voiceSynthesizer.speak("silence")
                 .chain(() -> armMoveInitiator.moveBoth(LEFT_UP.steps(), RIGHT_UP.steps()))
                 .chain(() -> Uni.combine().all().unis(voiceSynthesizer.speak("start"),
@@ -29,7 +30,7 @@ public class StartBehavior {
                         .asTuple())
                 .chain(() -> armMoveInitiator.moveBoth(LEFT_DOWN.steps(), RIGHT_DOWN.steps()))
                 .subscribe().with(
-                        unused -> Log.info("Success Start behaviour ended"),
-                        failure -> Log.error("Failed to fire Start behaviour", failure));
+                        unused -> Log.info("Success StartUp behaviour ended"),
+                        failure -> Log.error("Failed to fire StartUp behaviour", failure));
     }
 }

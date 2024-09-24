@@ -52,15 +52,6 @@ public class RpiFaceAdapter implements FacialController {
         mouthColor = new Color(196, 10, 35);
     }
 
-    private void drawAllColors(Ws281xLedStrip strip, int pixel) throws InterruptedException {
-        for (Color color : colors) {
-            strip.setPixel(pixel, color);
-            strip.setPixel(pixel + 4, color);
-            strip.render();
-            Thread.sleep(7);
-        }
-    }
-
     @Override
     public Uni<Void> simulateTalkingFace(long sleep, int time) {
         Log.debugf("Enter simulate talking face: sleep %d time %d", sleep, time);
@@ -88,6 +79,37 @@ public class RpiFaceAdapter implements FacialController {
                 throw new FacialControllerException(e);
             }
             Log.debug("Exit simulate talking face");
+            return null;
+        })).runSubscriptionOn(Infrastructure.getDefaultExecutor()).replaceWithVoid();
+    }
+
+    @Override
+    public Uni<Void> actOnStartup(long sleep, int time) {
+        Log.debugf("Enter actOnStartup: sleep %d time %d", sleep, time);
+        return Uni.createFrom().item(Unchecked.supplier(() -> {
+            try {
+                var strip = new Ws281xLedStrip(ledsCount, gpioPin, frequencyHz, dma, 16, pwmChannel, invert, stripType, true);
+                strip.setStrip(Color.BLACK);
+                int pixelNum = 4;
+                for (int circle = 1; circle <= time; circle++) {
+                    for (int pixel = 0; pixel < pixelNum; pixel++) {
+                        strip.setPixel(pixel, colors[pixel % colors.length]);
+                        strip.setPixel(pixel + 4, colors[pixel % colors.length]);
+                        strip.setPixel(11 - pixel, mouthColor);
+                        strip.setPixel(pixel + 12, mouthColor);
+                        strip.render();
+                        Thread.sleep(sleep);
+                        strip.setPixel(pixel, BLACK);
+                        strip.setPixel(pixel + 4, BLACK);
+                    }
+                    strip.setStrip(Color.BLACK);
+                    strip.render();
+                }
+            } catch (Exception e) {
+                Log.error(e);
+                throw new FacialControllerException(e);
+            }
+            Log.debug("Exit actOnStartup");
             return null;
         })).runSubscriptionOn(Infrastructure.getDefaultExecutor()).replaceWithVoid();
     }
@@ -122,6 +144,15 @@ public class RpiFaceAdapter implements FacialController {
             Log.debug("Exit displayBCD");
             return null;
         })).runSubscriptionOn(Infrastructure.getDefaultExecutor()).replaceWithVoid();
+    }
+
+    private void drawAllColors(Ws281xLedStrip strip, int pixel) throws InterruptedException {
+        for (Color color : colors) {
+            strip.setPixel(pixel, color);
+            strip.setPixel(pixel + 4, color);
+            strip.render();
+            Thread.sleep(7);
+        }
     }
 
     @Override

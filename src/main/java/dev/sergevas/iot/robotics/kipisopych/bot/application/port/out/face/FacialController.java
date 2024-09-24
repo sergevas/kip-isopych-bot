@@ -6,6 +6,8 @@ public interface FacialController {
 
     Uni<Void> simulateTalkingFace(long sleep, int time);
 
+    Uni<Void> actOnStartup(long sleep, int time);
+
     Uni<Void> displayBCD(int valueToDisplay);
 
     void blinkRightEye(double speed);

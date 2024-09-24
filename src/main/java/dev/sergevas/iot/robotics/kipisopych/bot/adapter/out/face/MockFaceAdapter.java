@@ -23,6 +23,16 @@ public class MockFaceAdapter implements FacialController {
     }
 
     @Override
+    public Uni<Void> actOnStartup(long sleep, int time) {
+        return Uni.createFrom().item(Unchecked.supplier(() -> {
+            Log.debugf("Enter actOnStartup: sleep=%d time=%d", sleep, time);
+            Thread.sleep(sleep);
+            Log.debug("Exit actOnStartup");
+            return null;
+        })).runSubscriptionOn(Infrastructure.getDefaultExecutor()).replaceWithVoid();
+    }
+
+    @Override
     public Uni<Void> displayBCD(int valueToDisplay) {
         return Uni.createFrom().item(Unchecked.supplier(() -> {
             Log.debugf("Enter simulate displayBCD valueToDisplay=%d", valueToDisplay);
