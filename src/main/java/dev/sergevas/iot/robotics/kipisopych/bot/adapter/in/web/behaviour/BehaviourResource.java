@@ -5,8 +5,11 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.Response;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 @Path("behaviour")
+@Tag(name = "Всякое поведение Исопыча", description = """
+   Здесь можно покомандовать Исопычем и принудительно позапускать его разнообразное поведение.""")
 public class BehaviourResource {
 
     @Inject
