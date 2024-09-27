@@ -12,7 +12,7 @@ import jakarta.inject.Inject;
 import static dev.sergevas.iot.robotics.kipisopych.bot.domain.arm.ArmPosition.*;
 
 @ApplicationScoped
-public class StartUpBehavior implements BehaviourUseCase {
+public class BehaviorService implements BehaviourUseCase {
 
     @Inject
     ArmMoveInitiator armMoveInitiator;
@@ -24,13 +24,23 @@ public class StartUpBehavior implements BehaviourUseCase {
     public void startUp() {
         Log.debug("Enter StartUp behaviour");
         voiceSynthesizer.speak("silence")
-                .chain(() -> armMoveInitiator.moveBoth(LEFT_UP.steps(), RIGHT_UP.steps()))
+                .chain(() -> Uni.combine().all().unis(armMoveInitiator.moveBoth(LEFT_UP.steps(), RIGHT_UP.steps()),
+                                facialController.blinkOnStartup())
+                        .asTuple())
                 .chain(() -> Uni.combine().all().unis(voiceSynthesizer.speak("start"),
-                                facialController.simulateTalkingFace(75, 12))
+                                facialController.blinkOnStartup())
                         .asTuple())
                 .chain(() -> armMoveInitiator.moveBoth(LEFT_DOWN.steps(), RIGHT_DOWN.steps()))
                 .subscribe().with(
                         unused -> Log.info("Success StartUp behaviour ended"),
                         failure -> Log.error("Failed to fire StartUp behaviour", failure));
+    }
+
+    public void dance() {
+        Log.debug("Enter Dance behaviour");
+        voiceSynthesizer.speak("breakdance")
+                .subscribe().with(
+                        unused -> Log.info("Success Dance behaviour ended"),
+                        failure -> Log.error("Failed to fire Dance behaviour", failure));
     }
 }

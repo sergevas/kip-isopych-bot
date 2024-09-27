@@ -10,20 +10,18 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.openapi.annotations.Operation;
-import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
-import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 @Path("pomodoro")
 @Tag(name = "Помодоро таймер", description = """
-   Здесь находятся настройки помодора таймера Исопыча.
-   Таймер можно запустить, поставить на паузу и запустить заново.
-   Количество помодоров, длительность одного помодоро, длительность короткого перерыва,
-   длительность длинного перерыва - всё-всё-всё настраивается у Исопыча.""")
+        Здесь находятся настройки помодоро таймера Исопыча.
+        Таймер можно запустить, поставить на паузу, продолжить и запустить заново.
+        Количество помодоров, длительность одного помодоро, длительность короткого перерыва,
+        длительность большого перерыва - всё-всё-всё настраивается у Исопыча.""")
 public class PomodoroResource {
 
     @Inject
@@ -35,8 +33,8 @@ public class PomodoroResource {
     @Operation(
             summary = "Установить или обновить таймер",
             description = """
-                    Здесь можно устанвить таймер.
-                    Исопычу без разницы, были ли до этого уже установлен таймер.
+                    Здесь можно установить таймер.
+                    Исопычу без разницы, был ли до этого уже установлен таймер.
                     Он начнет отсчет заново."""
     )
     public Response setupPomodoro(@RequestBody(description = "Это - конфигурация таймера", required = true,
@@ -44,13 +42,13 @@ public class PomodoroResource {
                     schema = @Schema(name = "pomodoroConfig", type = SchemaType.OBJECT, required = true,
                             implementation = PomodoroConfig.class),
                     example = """
-                    {
-                      "pomodoroDuration": 25,
-                      "shortBreakDuration": 5,
-                      "longBreakDuration": 15,
-                      "numOfPomodoros": 4
-                    }
-                    """))PomodoroConfig pomodoroConfig) {
+                            {
+                              "pomodoroDuration": 25,
+                              "shortBreakDuration": 5,
+                              "longBreakDuration": 15,
+                              "numOfPomodoros": 4
+                            }
+                            """)) PomodoroConfig pomodoroConfig) {
         pomodoroControlUseCase.setup(pomodoroConfig);
         return Response.ok().build();
     }
@@ -70,7 +68,7 @@ public class PomodoroResource {
     @Path("pause")
     @Operation(
             summary = "Поставить таймер на паузу",
-            description = "Исопыч запомнит момент останвки таймера. Но только до рестарта. После рестарта он всё забудет."
+            description = "Исопыч запомнит момент остановки таймера. Но только до рестарта. После рестарта он всё забудет."
     )
     public Response pausePomodoro() {
         pomodoroControlUseCase.pause();

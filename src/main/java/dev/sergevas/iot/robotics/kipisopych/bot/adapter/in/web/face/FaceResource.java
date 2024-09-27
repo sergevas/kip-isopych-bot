@@ -1,18 +1,38 @@
 package dev.sergevas.iot.robotics.kipisopych.bot.adapter.in.web.face;
 
 import dev.sergevas.iot.robotics.kipisopych.bot.application.port.out.face.FacialController;
+import io.smallrye.mutiny.Uni;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-@Path("face")
+@Path("behaviour/face")
 public class FaceResource {
 
     @Inject
     FacialController facialController;
+
+    @GET
+    @Path("blinkOnStartup")
+    public Uni<Void> blinkOnStartup() {
+        return facialController.blinkOnStartup();
+    }
+
+    @GET
+    @Path("lights/on")
+    public Uni<Void> lightsOn() {
+        return facialController.lightsOn();
+    }
+
+    @GET
+    @Path("lights/off")
+    public Uni<Void> lightsOff() {
+        return facialController.lightsOff();
+    }
 
     @PUT
     @Path("blinkBoth")

@@ -23,11 +23,31 @@ public class MockFaceAdapter implements FacialController {
     }
 
     @Override
-    public Uni<Void> actOnStartup(long sleep, int time) {
+    public Uni<Void> blinkOnStartup() {
         return Uni.createFrom().item(Unchecked.supplier(() -> {
-            Log.debugf("Enter actOnStartup: sleep=%d time=%d", sleep, time);
-            Thread.sleep(sleep);
-            Log.debug("Exit actOnStartup");
+            Log.debug("Enter blinkOnStartup");
+            Thread.sleep(2000);
+            Log.debug("Exit blinkOnStartup");
+            return null;
+        })).runSubscriptionOn(Infrastructure.getDefaultExecutor()).replaceWithVoid();
+    }
+
+    @Override
+    public Uni<Void> lightsOn() {
+        return Uni.createFrom().item(Unchecked.supplier(() -> {
+            Log.debug("Enter lightsOn");
+            Thread.sleep(2000);
+            Log.debug("Exit lightsOn");
+            return null;
+        })).runSubscriptionOn(Infrastructure.getDefaultExecutor()).replaceWithVoid();
+    }
+
+    @Override
+    public Uni<Void> lightsOff() {
+        return Uni.createFrom().item(Unchecked.supplier(() -> {
+            Log.debug("Enter lightsOff");
+            Thread.sleep(2000);
+            Log.debug("Exit lightsOff");
             return null;
         })).runSubscriptionOn(Infrastructure.getDefaultExecutor()).replaceWithVoid();
     }
@@ -53,7 +73,7 @@ public class MockFaceAdapter implements FacialController {
     }
 
     @Override
-    public void moveMouth(double speed) {
-        Log.infof("Kip Isopych is moving his mouth with speed %f", speed);
+    public void moveMouth(long sleep, int time) {
+        Log.infof("Kip Isopych is moving his mouth sleep %d time %d", sleep, time);
     }
 }

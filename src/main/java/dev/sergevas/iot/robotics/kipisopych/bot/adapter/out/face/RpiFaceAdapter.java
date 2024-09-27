@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.github.mbelling.ws281x.Color.BLACK;
+import static com.github.mbelling.ws281x.Color.WHITE;
 
 @ApplicationScoped
 @IfBuildProfile("prod")
@@ -84,34 +85,81 @@ public class RpiFaceAdapter implements FacialController {
     }
 
     @Override
-    public Uni<Void> actOnStartup(long sleep, int time) {
-        Log.debugf("Enter actOnStartup: sleep %d time %d", sleep, time);
+    public Uni<Void> blinkOnStartup() {
+        Log.debug("Enter blinkOnStartup");
         return Uni.createFrom().item(Unchecked.supplier(() -> {
             try {
                 var strip = new Ws281xLedStrip(ledsCount, gpioPin, frequencyHz, dma, 16, pwmChannel, invert, stripType, true);
+                var time = 3;
+                var color = new Color(210, 45, 45);
+                var sleep = 400;
                 strip.setStrip(Color.BLACK);
-                int pixelNum = 4;
                 for (int circle = 1; circle <= time; circle++) {
-                    for (int pixel = 0; pixel < pixelNum; pixel++) {
-                        strip.setPixel(pixel, colors[pixel % colors.length]);
-                        strip.setPixel(pixel + 4, colors[pixel % colors.length]);
-                        strip.setPixel(11 - pixel, mouthColor);
-                        strip.setPixel(pixel + 12, mouthColor);
-                        strip.render();
-                        Thread.sleep(sleep);
-                        strip.setPixel(pixel, BLACK);
-                        strip.setPixel(pixel + 4, BLACK);
+                    if (circle > 1) {
+                        color = new Color(19, 128, 236);
+                        sleep = 200;
                     }
-                    strip.setStrip(Color.BLACK);
-                    strip.render();
+                    renderBothEyes(strip, color);
+                    Thread.sleep(sleep);
+                    renderBothEyes(strip, BLACK);
+                    Thread.sleep(sleep);
                 }
+                renderBothEyes(strip, color);
             } catch (Exception e) {
                 Log.error(e);
                 throw new FacialControllerException(e);
             }
-            Log.debug("Exit actOnStartup");
+            Log.debug("Exit blinkOnStartup");
             return null;
         })).runSubscriptionOn(Infrastructure.getDefaultExecutor()).replaceWithVoid();
+    }
+
+    @Override
+    public Uni<Void> lightsOn() {
+        Log.debug("Enter lightsOn");
+        return Uni.createFrom().item(Unchecked.supplier(() -> {
+            try {
+                var strip = new Ws281xLedStrip(ledsCount, gpioPin, frequencyHz, dma, 16, pwmChannel, invert, stripType, true);
+                strip.setStrip(WHITE);
+                strip.render();
+            } catch (Exception e) {
+                Log.error(e);
+                throw new FacialControllerException(e);
+            }
+            Log.debug("Exit lightsOn");
+            return null;
+        })).runSubscriptionOn(Infrastructure.getDefaultExecutor()).replaceWithVoid();
+    }
+
+    @Override
+    public Uni<Void> lightsOff() {
+        Log.debug("Enter lightsOff");
+        return Uni.createFrom().item(Unchecked.supplier(() -> {
+            try {
+                var strip = new Ws281xLedStrip(ledsCount, gpioPin, frequencyHz, dma, 16, pwmChannel, invert, stripType, true);
+                strip.setStrip(BLACK);
+                strip.render();
+            } catch (Exception e) {
+                Log.error(e);
+                throw new FacialControllerException(e);
+            }
+            Log.debug("Exit lightsOff");
+            return null;
+        })).runSubscriptionOn(Infrastructure.getDefaultExecutor()).replaceWithVoid();
+    }
+
+    @Override
+    public void moveMouth(long sleep, int time) {
+        Log.debugf("Enter moveMouth: sleep %d time %d", sleep, time);
+
+        Log.debug("Exit moveMouth");
+    }
+
+    private void renderBothEyes(Ws281xLedStrip strip, Color color) {
+        for (int pixel = 0; pixel < 9; pixel++) {
+            strip.setPixel(pixel, color);
+        }
+        strip.render();
     }
 
     @Override
@@ -216,9 +264,5 @@ public class RpiFaceAdapter implements FacialController {
         } catch (Exception e) {
             Log.error(e);
         }
-    }
-
-    @Override
-    public void moveMouth(double speed) {
     }
 }
