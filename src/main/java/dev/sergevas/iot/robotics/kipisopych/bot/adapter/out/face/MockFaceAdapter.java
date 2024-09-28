@@ -1,6 +1,8 @@
 package dev.sergevas.iot.robotics.kipisopych.bot.adapter.out.face;
 
 import dev.sergevas.iot.robotics.kipisopych.bot.application.port.out.face.FacialController;
+import dev.sergevas.iot.robotics.kipisopych.bot.domain.pomodoro.PomodoroState;
+import dev.sergevas.iot.robotics.kipisopych.bot.domain.pomodoro.PomodoroType;
 import io.quarkus.arc.DefaultBean;
 import io.quarkus.logging.Log;
 import io.smallrye.mutiny.Uni;
@@ -58,6 +60,15 @@ public class MockFaceAdapter implements FacialController {
             Log.debugf("Enter simulate displayBCD valueToDisplay=%d", valueToDisplay);
             Thread.sleep(10000);
             Log.debug("Exit simulate displayBCD");
+            return null;
+        })).runSubscriptionOn(Infrastructure.getDefaultExecutor()).replaceWithVoid();
+    }
+
+    @Override
+    public Uni<Void> displayPomodoroTypeDependantEyes(PomodoroType pomodoroType) {
+        return Uni.createFrom().item(Unchecked.supplier(() -> {
+            Log.debugf("Enter simulate displayPomodoroStateDependantEyes pomodoroType=%s", pomodoroType);
+            Log.debug("Exit simulate displayPomodoroStateDependantEyes");
             return null;
         })).runSubscriptionOn(Infrastructure.getDefaultExecutor()).replaceWithVoid();
     }

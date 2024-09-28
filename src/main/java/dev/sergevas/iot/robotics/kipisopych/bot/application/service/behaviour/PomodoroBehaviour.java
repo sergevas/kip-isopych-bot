@@ -3,6 +3,8 @@ package dev.sergevas.iot.robotics.kipisopych.bot.application.service.behaviour;
 import dev.sergevas.iot.robotics.kipisopych.bot.application.port.out.arms.ArmMoveInitiator;
 import dev.sergevas.iot.robotics.kipisopych.bot.application.port.out.face.FacialController;
 import dev.sergevas.iot.robotics.kipisopych.bot.application.port.out.voice.VoiceSynthesizer;
+import dev.sergevas.iot.robotics.kipisopych.bot.domain.pomodoro.PomodoroState;
+import dev.sergevas.iot.robotics.kipisopych.bot.domain.pomodoro.PomodoroType;
 import io.quarkus.logging.Log;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -91,5 +93,15 @@ public class PomodoroBehaviour {
                         unused -> Log.info("Success exit resume behaviour"),
                         failure -> Log.error("Failed to fire resume behaviour", failure));
         Log.debug("Exit resume behaviour");
+    }
+
+    public void tick(int time, PomodoroType type) {
+        Log.debugf("Enter tick behaviour time=%d type=%s", time, type);
+        facialController.displayBCD(time)
+                .chain(() -> facialController.displayPomodoroTypeDependantEyes(type))
+                .subscribe().with(
+                        unused -> Log.info("Success exit tick behaviour"),
+                        failure -> Log.error("Failed to fire tick behaviour", failure));
+        Log.debug("Exit setup behaviour");
     }
 }

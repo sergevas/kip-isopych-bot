@@ -5,6 +5,9 @@ import com.github.mbelling.ws281x.LedStripType;
 import com.github.mbelling.ws281x.Ws281xLedStrip;
 import dev.sergevas.iot.robotics.kipisopych.bot.application.port.out.face.FacialController;
 import dev.sergevas.iot.robotics.kipisopych.bot.application.port.out.face.FacialControllerException;
+import dev.sergevas.iot.robotics.kipisopych.bot.application.service.pomodoro.PomodoroControlService;
+import dev.sergevas.iot.robotics.kipisopych.bot.domain.pomodoro.PomodoroState;
+import dev.sergevas.iot.robotics.kipisopych.bot.domain.pomodoro.PomodoroType;
 import io.quarkus.arc.profile.IfBuildProfile;
 import io.quarkus.logging.Log;
 import io.smallrye.mutiny.Uni;
@@ -12,6 +15,7 @@ import io.smallrye.mutiny.infrastructure.Infrastructure;
 import io.smallrye.mutiny.unchecked.Unchecked;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +42,8 @@ public class RpiFaceAdapter implements FacialController {
     boolean invert;
     @ConfigProperty(name = "ledstrip.stripType")
     LedStripType stripType;
+    @Inject
+    PomodoroControlService pomodoroControlService;
 
     private Color[] colors;
     private Color mouthColor;
@@ -160,6 +166,28 @@ public class RpiFaceAdapter implements FacialController {
             strip.setPixel(pixel, color);
         }
         strip.render();
+    }
+
+    @Override
+    public Uni<Void> displayPomodoroTypeDependantEyes(PomodoroType pomodoroType) {
+        Log.debugf("Enter displayPomodoroStateDependantEyes: pomodoroType=%s", pomodoroType);
+        return Uni.createFrom().item(Unchecked.supplier(() -> {
+            try {
+                Color pomodoroStateDependantColor = switch (pomodoroType) {
+                    case POMODORO -> new Color(62,180,137); // Мятный
+                    case SHORT_BREAK -> new Color(127,199,255); // Небесный
+                    case LONG_BREAK -> new Color(252,232,131); // Желтый Крайола
+                };
+                var strip = new Ws281xLedStrip(ledsCount, gpioPin, frequencyHz, dma, 16, pwmChannel, invert, stripType, true);
+                strip.setStrip(pomodoroStateDependantColor);
+                strip.render();
+            } catch (Exception e) {
+                Log.error(e);
+                throw new FacialControllerException(e);
+            }
+            Log.debug("Exit displayPomodoroStateDependantEyes");
+            return null;
+        })).runSubscriptionOn(Infrastructure.getDefaultExecutor()).replaceWithVoid();
     }
 
     @Override

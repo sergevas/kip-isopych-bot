@@ -1,6 +1,8 @@
 package dev.sergevas.iot.robotics.kipisopych.bot.domain.pomodoro;
 
 import jakarta.persistence.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 import java.util.StringJoiner;
@@ -14,6 +16,7 @@ import static dev.sergevas.iot.robotics.kipisopych.bot.domain.pomodoro.PomodoroT
 @NamedQuery(name = "Pomodoro.findAll", query = "from Pomodoro")
 public class Pomodoro {
 
+    private static final Logger log = LoggerFactory.getLogger(Pomodoro.class);
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_gen")
     private Long id;
@@ -167,6 +170,14 @@ public class Pomodoro {
         return 0 == currentNumber % numOfPomodoros;
     }
 
+    public int getRemainTime() {
+        return switch (type) {
+            case POMODORO -> pomodoroDuration - elapsedTime;
+            case SHORT_BREAK -> shortBreakDuration - elapsedTime;
+            case LONG_BREAK -> longBreakDuration - elapsedTime;
+        };
+    }
+
     public void toggleToLongBreak() {
         this.type = LONG_BREAK;
         resetElapsedTime();
@@ -216,6 +227,7 @@ public class Pomodoro {
                 .add("numOfPomodoros=" + getNumOfPomodoros())
                 .add("currentNumber=" + getCurrentNumber())
                 .add("elapsedTime=" + getElapsedTime())
+                .add("remain=" + getRemainTime())
                 .add("type=" + getType())
                 .add("state=" + getState())
                 .toString();
