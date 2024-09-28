@@ -1,10 +1,10 @@
 package dev.sergevas.iot.robotics.kipisopych.bot.domain.arm;
 
 public enum ArmPosition {
-    
+
     MIDDLE(150),
     LEFT_UP(50),
-    LEFT_DOWN(250),
+    LEFT_DOWN(240),
     RIGHT_UP(250),
     RIGHT_DOWN(50);
 

@@ -17,7 +17,7 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
                         name = "Спросите Серёжу, если нужны подробности. Его все знают",
                         url = "https://github.com/sergevas/kip-isopych-bot"
                 ),
-                description = "Это - ресурсы Кип Исопыча. Их можно смело дергать. И тогда Исопыч покажет, на что способен."
+                description = "Это - ресурсы Исопыча. Их можно смело дергать. И тогда Исопыч покажет, на что способен."
         )
 )
 public class KipIsopychApplication extends Application {
