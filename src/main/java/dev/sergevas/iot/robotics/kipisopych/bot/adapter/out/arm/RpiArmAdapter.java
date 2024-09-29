@@ -2,6 +2,7 @@ package dev.sergevas.iot.robotics.kipisopych.bot.adapter.out.arm;
 
 import dev.sergevas.iot.robotics.kipisopych.bot.application.port.out.arms.ArmMoveException;
 import dev.sergevas.iot.robotics.kipisopych.bot.application.port.out.arms.ArmMoveInitiator;
+import dev.sergevas.iot.robotics.kipisopych.bot.domain.arm.ArmDirection;
 import io.quarkus.arc.profile.IfBuildProfile;
 import io.quarkus.logging.Log;
 import io.smallrye.mutiny.Uni;
@@ -22,32 +23,51 @@ public class RpiArmAdapter implements ArmMoveInitiator {
     @ConfigProperty(name = "arms.right.side")
     String rightSide;
 
+    @ConfigProperty(name = "arms.enabled")
+    boolean enabled;
+
     @Override
-    public Uni<Void> moveLeft(int steps) {
-        return moveArm(leftSide, steps);
+    public Uni<Void> moveLeft(ArmDirection armDirection) {
+        return moveArm(leftSide, armDirection);
     }
 
     @Override
-    public Uni<Void> moveRight(int steps) {
-        return moveArm(rightSide, steps);
+    public Uni<Void> moveRight(ArmDirection armDirection) {
+        return moveArm(rightSide, armDirection);
     }
 
     @Override
-    public Uni<Void> moveBoth(int lSteps, int rSteps) {
-        Log.debugf("Move both arms for %d lSteps and %d rSteps started", lSteps, rSteps);
+    public Uni<Void> moveBoth(ArmDirection lArmDirection, ArmDirection rArmDirection) {
+        if (!enabled) {
+            Log.debug("Arms are disabled");
+            return Uni.createFrom().nullItem();
+        }
+        Log.debugf("Move both arms for %s lArmDirection and %s rArmDirection started", lArmDirection, rArmDirection);
         return Uni.createFrom().item(Unchecked.supplier(() -> {
-            var command = new String[]{"/bin/sh", "-c", "echo " + leftSide + "=" + lSteps + " > /dev/servoblaster;"
-                    + "echo " + rightSide + "=" + rSteps + " > /dev/servoblaster"};
-            startProcessBuilder(command);
+            for (int i = 0; i < lArmDirection.getPositions().length; i++) {
+                var lSteps = lArmDirection.getPositions()[i];
+                var rSteps = rArmDirection.getPositions()[i];
+                var command = new String[]{"/bin/sh", "-c", "echo " + leftSide + "=" + lSteps + " > /dev/servoblaster;"
+                        + "echo " + rightSide + "=" + rSteps + " > /dev/servoblaster"};
+                startProcessBuilder(command);
+                Thread.sleep(50);
+            }
             return null;
         })).runSubscriptionOn(Infrastructure.getDefaultExecutor()).replaceWithVoid();
     }
 
-    public Uni<Void> moveArm(String side, int steps) {
-        Log.debugf("Move %s side arm for %d steps started", side, steps);
+    public Uni<Void> moveArm(String side, ArmDirection armDirection) {
+        if (!enabled) {
+            Log.debug("Arms are disabled");
+            return Uni.createFrom().nullItem();
+        }
+        Log.debugf("Move %s side arm for %s arm direction started", side, armDirection);
         return Uni.createFrom().item(Unchecked.supplier(() -> {
-            var command = new String[]{"/bin/sh", "-c", "echo " + side + "=" + steps + " > /dev/servoblaster"};
-            startProcessBuilder(command);
+            for (int steps : armDirection.getPositions()) {
+                var command = new String[]{"/bin/sh", "-c", "echo " + side + "=" + steps + " > /dev/servoblaster"};
+                startProcessBuilder(command);
+                Thread.sleep(50);
+            }
             return null;
         })).runSubscriptionOn(Infrastructure.getDefaultExecutor()).replaceWithVoid();
     }

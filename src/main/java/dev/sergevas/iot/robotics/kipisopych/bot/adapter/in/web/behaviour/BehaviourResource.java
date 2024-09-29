@@ -29,8 +29,8 @@ public class BehaviourResource {
     @GET
     @Path("dance")
     @Operation(
-            summary = "Танец",
-            description = "Исопыч танцует брейк-данс.")
+            summary = "Исопыч танцует брейк-данс",
+            description = "Исопыч брейкует.")
     public Response dance() {
         behaviourUseCase.dance();
         return Response.ok().build();

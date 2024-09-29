@@ -1,7 +1,6 @@
 package dev.sergevas.iot.robotics.kipisopych.bot.adapter.out.face;
 
 import dev.sergevas.iot.robotics.kipisopych.bot.application.port.out.face.FacialController;
-import dev.sergevas.iot.robotics.kipisopych.bot.domain.pomodoro.PomodoroState;
 import dev.sergevas.iot.robotics.kipisopych.bot.domain.pomodoro.PomodoroType;
 import io.quarkus.arc.DefaultBean;
 import io.quarkus.logging.Log;
@@ -30,6 +29,16 @@ public class MockFaceAdapter implements FacialController {
             Log.debug("Enter blinkOnStartup");
             Thread.sleep(2000);
             Log.debug("Exit blinkOnStartup");
+            return null;
+        })).runSubscriptionOn(Infrastructure.getDefaultExecutor()).replaceWithVoid();
+    }
+
+    @Override
+    public Uni<Void> dance() {
+        return Uni.createFrom().item(Unchecked.supplier(() -> {
+            Log.debug("Enter dance");
+            Thread.sleep(2000);
+            Log.debug("Exit dance");
             return null;
         })).runSubscriptionOn(Infrastructure.getDefaultExecutor()).replaceWithVoid();
     }
@@ -65,10 +74,10 @@ public class MockFaceAdapter implements FacialController {
     }
 
     @Override
-    public Uni<Void> displayPomodoroTypeDependantEyes(PomodoroType pomodoroType) {
+    public Uni<Void> renderPomodoroTypeDependantEyes(PomodoroType pomodoroType) {
         return Uni.createFrom().item(Unchecked.supplier(() -> {
-            Log.debugf("Enter simulate displayPomodoroStateDependantEyes pomodoroType=%s", pomodoroType);
-            Log.debug("Exit simulate displayPomodoroStateDependantEyes");
+            Log.debugf("Enter simulate renderPomodoroTypeDependantEyes pomodoroType=%s", pomodoroType);
+            Log.debug("Exit simulate renderPomodoroTypeDependantEyes");
             return null;
         })).runSubscriptionOn(Infrastructure.getDefaultExecutor()).replaceWithVoid();
     }

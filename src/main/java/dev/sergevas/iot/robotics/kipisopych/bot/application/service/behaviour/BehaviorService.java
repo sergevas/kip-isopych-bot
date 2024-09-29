@@ -9,7 +9,8 @@ import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
-import static dev.sergevas.iot.robotics.kipisopych.bot.domain.arm.ArmPosition.*;
+import static dev.sergevas.iot.robotics.kipisopych.bot.application.service.behaviour.Delay.delay;
+import static dev.sergevas.iot.robotics.kipisopych.bot.domain.arm.ArmDirection.*;
 
 @ApplicationScoped
 public class BehaviorService implements BehaviourUseCase {
@@ -24,13 +25,12 @@ public class BehaviorService implements BehaviourUseCase {
     public void startUp() {
         Log.debug("Enter StartUp behaviour");
         voiceSynthesizer.speak("silence")
-                .chain(() -> Uni.combine().all().unis(armMoveInitiator.moveBoth(LEFT_UP.steps(), RIGHT_UP.steps()),
+                .chain(() -> Uni.combine().all().unis(armMoveInitiator.moveBoth(LEFT_DOWN_TO_MIDDLE, RIGHT_DOWN_TO_MIDDLE),
                                 facialController.blinkOnStartup())
                         .asTuple())
                 .chain(() -> Uni.combine().all().unis(voiceSynthesizer.speak("start"),
-                                facialController.blinkOnStartup())
-                        .asTuple())
-                .chain(() -> armMoveInitiator.moveBoth(LEFT_DOWN.steps(), RIGHT_DOWN.steps()))
+                        facialController.blinkOnStartup()).asTuple())
+                .chain(() -> armMoveInitiator.moveBoth(LEFT_MIDDLE_TO_DOWN, RIGHT_MIDDLE_TO_DOWN))
                 .subscribe().with(
                         unused -> Log.info("Success StartUp behaviour ended"),
                         failure -> Log.error("Failed to fire StartUp behaviour", failure));
@@ -38,7 +38,22 @@ public class BehaviorService implements BehaviourUseCase {
 
     public void dance() {
         Log.debug("Enter Dance behaviour");
-        voiceSynthesizer.speak("breakdance")
+        Uni.combine().all().unis(voiceSynthesizer.speak("breakdance"),
+                        facialController.dance(),
+                        armMoveInitiator.moveBoth(LEFT_DOWN_TO_MIDDLE, RIGHT_DOWN_TO_MIDDLE)
+                                .chain(() -> delay(3000))
+                                .chain(() -> armMoveInitiator.moveBoth(LEFT_MIDDLE_TO_DOWN, RIGHT_MIDDLE_TO_UP))
+                                .chain(() -> delay(500))
+                                .chain(() -> armMoveInitiator.moveBoth(LEFT_DOWN_TO_MIDDLE, RIGHT_UP_TO_MIDDLE))
+                                .chain(() -> delay(100))
+                                .chain(() -> armMoveInitiator.moveBoth(LEFT_MIDDLE_TO_UP, RIGHT_MIDDLE_TO_DOWN))
+                                .chain(() -> armMoveInitiator.moveBoth(LEFT_UP_TO_MIDDLE, RIGHT_DOWN_TO_MIDDLE))
+                                .chain(() -> delay(50))
+                                .chain(() -> armMoveInitiator.moveBoth(LEFT_MIDDLE_TO_DOWN, RIGHT_MIDDLE_TO_UP))
+                                .chain(() -> armMoveInitiator.moveBoth(LEFT_UP_TO_MIDDLE, RIGHT_DOWN_TO_MIDDLE))
+                                .chain(() -> delay(500))
+                                .chain(() -> armMoveInitiator.moveBoth(LEFT_MIDDLE_TO_DOWN, RIGHT_MIDDLE_TO_DOWN))
+                ).asTuple()
                 .subscribe().with(
                         unused -> Log.info("Success Dance behaviour ended"),
                         failure -> Log.error("Failed to fire Dance behaviour", failure));

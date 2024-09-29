@@ -31,8 +31,8 @@ public class PomodoroControlService implements PomodoroControlUseCase {
     public void setup(PomodoroConfig pomCfg) {
         try {
             Log.debugf("Setting up the Pomodoro Timer with initial config %s", pomCfg);
-            createOrUpdatePomodoro(pomCfg);
-            pomodoroBehaviour.setup();
+            var pomodoro = createOrUpdatePomodoro(pomCfg);
+            pomodoroBehaviour.setup(pomodoro);
         } catch (Exception e) {
             Log.error(e);
         }
@@ -42,8 +42,8 @@ public class PomodoroControlService implements PomodoroControlUseCase {
     public void pause() {
         try {
             Log.info("Pause Pomodoro Timer");
-            updatePomodoroState(PAUSED);
-            pomodoroBehaviour.pause();
+            var pomodoro = updatePomodoroState(PAUSED);
+            pomodoroBehaviour.pause(pomodoro);
         } catch (Exception e) {
             Log.error(e);
         }
@@ -53,15 +53,15 @@ public class PomodoroControlService implements PomodoroControlUseCase {
     public void resume() {
         try {
             Log.debug("Resume Pomodoro Timer");
-            updatePomodoroState(STARTED);
-            pomodoroBehaviour.resume();
+            var pomodoro = updatePomodoroState(STARTED);
+            pomodoroBehaviour.resume(pomodoro);
         } catch (Exception e) {
             Log.error(e);
         }
     }
 
     @Transactional
-    public void createOrUpdatePomodoro(PomodoroConfig pomCfg) {
+    public Pomodoro createOrUpdatePomodoro(PomodoroConfig pomCfg) {
         Log.debug("Enter create or update Pomodoro");
         var pomodoroOpt = pomodoroReader.read();
         var pomodoro = pomodoroOpt.orElse(new Pomodoro()).reset();
@@ -74,12 +74,15 @@ public class PomodoroControlService implements PomodoroControlUseCase {
             Log.debugf("Persisting a new Pomodoro setup %s", pomCfg);
         }
         Log.debug("Exit create or update Pomodoro");
+        return pomodoro;
     }
 
     @Transactional
-    public void updatePomodoroState(PomodoroState pomodoroState) {
+    public Pomodoro updatePomodoroState(PomodoroState pomodoroState) {
         Log.debugf("Enter update PomodoroState %s", pomodoroState);
-        pomodoroReader.read().orElseThrow(() -> new PomodoroException(FETCH_ERROR_MSG)).setState(pomodoroState);
+        var pomodoro = pomodoroReader.read().orElseThrow(() -> new PomodoroException(FETCH_ERROR_MSG));
+        pomodoro.setState(pomodoroState);
         Log.debugf("Exit update PomodoroState %s", pomodoroState);
+        return pomodoro;
     }
 }
